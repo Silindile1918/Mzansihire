@@ -1,0 +1,7 @@
+This is the application ID, you should send with each API request.
+
+633837ca
+
+
+application key
+6b862b72d45b8da2aed3cb2d4f9b9164

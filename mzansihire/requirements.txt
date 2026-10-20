@@ -1,0 +1,9 @@
+
+streamlit
+scikit-learn
+pandas
+bcrypt
+pypdf
+python-docx
+Pillow
+requests
