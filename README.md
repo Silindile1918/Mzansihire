@@ -80,8 +80,8 @@ pip install -r requirements.txt
 1. [text](../mzansihire/data/LinkedIn_RDB_three.csv) 
 2.  .streamlit/secrets.toml
 
-   ADZUNA_APP_ID = "633837ca"
-   ADZUNA_APP_KEY = "6b862b72d45b8da2aed3cb2d4f9b9164"
+   ADZUNA_APP_ID = "my id"
+   ADZUNA_APP_KEY = "my key"
 
    ```
 3. Starting the app:
