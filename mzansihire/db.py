@@ -64,3 +64,68 @@ def verify_user(email: str, password: str):
     if row and bcrypt.checkpw(password.encode("utf-8"), row[3]):
         return {"id": row[0], "full_name": row[1], "email": row[2]}
     return None
+
+
+def init_profiles():
+    """Create the profiles table if it doesn't exist yet."""
+    with get_conn() as conn:
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS profiles (
+                user_id INTEGER PRIMARY KEY,
+                skills TEXT,
+                qualification TEXT,
+                experience_level TEXT,
+                career_interests TEXT,
+                preferred_location TEXT,
+                about TEXT,
+                picture BLOB,
+                updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            )
+            """
+        )
+
+
+PROFILE_FIELDS = [
+    "skills", "qualification", "experience_level",
+    "career_interests", "preferred_location", "about", "picture",
+]
+
+
+def get_profile(user_id: int):
+    """Returns the profile as a dict, or None if the user hasn't saved one yet."""
+    with get_conn() as conn:
+        row = conn.execute(
+            f"SELECT {', '.join(PROFILE_FIELDS)} FROM profiles WHERE user_id = ?",
+            (user_id,),
+        ).fetchone()
+    return dict(zip(PROFILE_FIELDS, row)) if row else None
+
+
+def save_profile(user_id: int, data: dict, picture_bytes=None):
+    """Saves (or updates) a profile. If no new picture is given, keeps the old one."""
+    existing = get_profile(user_id)
+    picture = picture_bytes
+    if picture is None and existing:
+        picture = existing["picture"]
+
+    with get_conn() as conn:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO profiles
+            (user_id, skills, qualification, experience_level,
+             career_interests, preferred_location, about, picture, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+            """,
+            (
+                user_id,
+                data["skills"],
+                data["qualification"],
+                data["experience_level"],
+                data["career_interests"],
+                data["preferred_location"],
+                data["about"],
+                picture,
+            ),
+        )
